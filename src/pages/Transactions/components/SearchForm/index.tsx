@@ -1,7 +1,9 @@
-import { MagnifyingGlass } from "phosphor-react";
-import { useForm } from "react-hook-form";
-import { SearchFormContainer } from "./styles";
+import { useContext } from 'react'
+import { CircleNotch, MagnifyingGlass } from 'phosphor-react'
+import { useForm } from 'react-hook-form'
+import { SearchFormContainer } from './styles'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { TransactionsContext } from '../../../../contexts/TransactionsContext'
 import * as z from 'zod'
 
 const SearchFormSchema = z.object({
@@ -11,34 +13,47 @@ const SearchFormSchema = z.object({
 type SearchFormInputs = z.infer<typeof SearchFormSchema>
 
 export function SearchForm() {
-  const { 
-    register, 
+  const { fetchTransactions } = useContext(TransactionsContext)
+
+  const {
+    register,
     handleSubmit,
-    formState: {
-      isSubmitting,
-    }  
+    formState: { isSubmitting },
   } = useForm<SearchFormInputs>({
     resolver: zodResolver(SearchFormSchema),
   })
 
   async function handleSearchTransactions(data: SearchFormInputs) {
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    console.log(data);
+    await fetchTransactions(data.query)
   }
 
   return (
     <SearchFormContainer onSubmit={handleSubmit(handleSearchTransactions)}>
-      <input 
+      <input
         type="text"
         placeholder="Busque por transações"
         {...register('query')}
       />
 
-      <button type="submit" disabled={isSubmitting}>
-        <MagnifyingGlass size={20}/>
-        Buscar
-      </button>
+      {!isSubmitting ? (
+        <button type="submit">
+          <MagnifyingGlass size={20} />
+          Buscar
+        </button>
+      ) : (
+        <button type="submit" disabled>
+          <CircleNotch size={20}>
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              dur="0.8s"
+              to="360"
+              repeatCount="indefinite"
+            />
+          </CircleNotch>
+          Buscar
+        </button>
+      )}
     </SearchFormContainer>
   )
 }
