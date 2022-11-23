@@ -1,4 +1,5 @@
 import { ThemeProvider } from 'styled-components'
+import { Toast } from './components/Toast'
 import { TransactionsProvider } from './contexts/TransactionsContext'
 import { Transactions } from './pages/Transactions'
 import { GlobalStyles } from './styles/global'
@@ -12,6 +13,7 @@ export function App() {
       <TransactionsProvider>
         <Transactions />
       </TransactionsProvider>
+      <Toast />
     </ThemeProvider>
   )
 }
